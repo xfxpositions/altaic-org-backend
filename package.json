@@ -1,0 +1,19 @@
+{
+  "name": "altaic-org-backend",
+  "version": "1.0.0",
+  "description": "divine server, just nodejs. simple",
+  "main": "index.js",
+  "repository": "https://github.com/altaic-org-backend",
+  "author": "xfxpositions",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "dev": "npx nodemon src/index.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "mongoose": "^6.9.1",
+    "nodemon": "^2.0.20"
+  }
+}
