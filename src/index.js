@@ -2,9 +2,49 @@ const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 const Post = require("./models/Post.js");
+const Common = require("./models/Common.js");
 const cors = require("cors");
 app.use(cors());
 app.use(express.json());
+
+const PostView = require("./views/PostViews.js");
+
+app.use(PostView);
+
+app.get("/increasevisitorcounter", (req, res, next) => {
+  Common.find({}, (err, result) => {
+    if (err) {
+      console.log(err);
+      res.json({ err: err });
+    } else {
+      console.log(result);
+      if (result.length == 0) {
+        Common.create({ visitors: 0 }, (result) => {
+          console.log(`visitors initialazed`);
+        });
+      } else {
+        Common.findByIdAndUpdate(
+          result[0]._id,
+          { $inc: { visitors: 1 } },
+          (err, result) => {
+            console.log(`visitors increased`);
+            res.json({ result: result.visitors });
+          }
+        );
+      }
+    }
+  });
+});
+app.get("/visitors", (req, res) => {
+  Common.find({}, (err, result) => {
+    if (err) {
+      console.log(err);
+      res.json({ err: err });
+    } else {
+      res.json({ visitors: result.visitors });
+    }
+  }).limit(1);
+});
 app.get("/", (req, res) => {
   Post.find({}, (err, result) => {
     if (err) {
@@ -81,7 +121,8 @@ app.get("/fetch/:id", (req, res) => {
   });
 });
 const dbConnect = async () => {
-  await mongoose.connect("mongodb://localhost:27017");
+  console.log("connecting db");
+  await mongoose.connect("mongodb://127.0.0.1:27017");
   console.log("connected to db!");
 };
 
