@@ -110,7 +110,7 @@ app.post("/find/", (req, res) => {
     }
   });
 });
-app.get("/fetch/:id", (req, res) => {
+app.get("/fetch/:id/", (req, res) => {
   Post.findById(req.params.id, (err, result) => {
     if (err) {
       console.log(err);
@@ -120,6 +120,29 @@ app.get("/fetch/:id", (req, res) => {
     }
   });
 });
+app.get("/multifetch/", (req, res) => {
+  let pageSize = 3;
+  let limit = req.query?.limit || 30;
+  let page = req.query?.page || 0;
+  let count;
+  Post.count({}, (err, count) => {
+    if (err) {
+      res.json({ err: err });
+    }
+    count = count;
+    Post.find({}, (err, result) => {
+      if (err) {
+        console.log(err);
+        res.json({ err: err });
+      } else {
+        res.json({ result: result, totalPosts: count });
+      }
+    })
+      .limit(limit)
+      .skip(page * pageSize);
+  });
+});
+
 const dbConnect = async () => {
   console.log("connecting db");
   await mongoose.connect("mongodb://127.0.0.1:27017");

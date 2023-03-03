@@ -20,4 +20,5 @@ let postSchema = new Schema(
 );
 
 let model = mongoose.model("posts", postSchema);
+
 module.exports = model;
