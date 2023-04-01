@@ -121,19 +121,28 @@ app.get("/fetch/:id", (req, res) => {
   });
 });
 
-app.get("/multifetch", (req, res) => {
+app.get("/multifetch", async (req, res) => {
   let limit = req.query.limit;
   let page = req.query.page;
-  Post.find({}, (err, result) => {
+  let totalPosts = 0;
+  Post.countDocuments({}, (err, count) => {
     if (err) {
-      console.log(err);
-      res.json({ err: err });
+      console.error(err);
     } else {
-      res.json({ result: result });
+      console.log(`Collection size: ${count}`);
+      totalPosts = count;
+      Post.find({}, (err, result) => {
+        if (err) {
+          console.log(err);
+          res.json({ err: err });
+        } else {
+          res.json({ result: result, totalPosts: totalPosts });
+        }
+      })
+        .skip(page * 3)
+        .limit(limit);
     }
-  })
-    .skip(page * 3)
-    .limit(limit);
+  });
 });
 
 const dbConnect = async () => {
