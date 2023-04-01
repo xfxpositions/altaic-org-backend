@@ -120,6 +120,22 @@ app.get("/fetch/:id", (req, res) => {
     }
   });
 });
+
+app.get("/multifetch", (req, res) => {
+  let limit = req.query.limit;
+  let page = req.query.page;
+  Post.find({}, (err, result) => {
+    if (err) {
+      console.log(err);
+      res.json({ err: err });
+    } else {
+      res.json({ result: result });
+    }
+  })
+    .skip(page * 3)
+    .limit(limit);
+});
+
 const dbConnect = async () => {
   console.log("connecting db");
   await mongoose.connect("mongodb://127.0.0.1:27017");
